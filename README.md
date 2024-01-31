@@ -12,4 +12,4 @@ EUBP_ScaleRotate   https://blueprintue.com/blueprint/wgtfg46g/ UE 5.3
 
 EUBP_AssignSkeleton  https://blueprintue.com/blueprint/3iw2vz5b/ UE 5.3
 
-EUBP_TransformSkeletalMesh https://blueprintue.com/blueprint/b4fxvyq_/ UE5.3 --Remove Enum in python script call, not needed for now
+EUBP_TransformSkeletalMesh https://blueprintue.com/blueprint/b4fxvyq_/ UE5.3 --Enum accepts cape, tail, backpack for now to fix corresponding synty asset root bones -> See also https://github.com/toxrus/UEPythonUtils -> CorrectBoneOffSet for needed python script
