@@ -8,6 +8,8 @@ How to install:
 Place inside content folder. That's it. Should load automatically and be useable.
 
 
+EUBP_SkeletonFix  https://blueprintue.com/blueprint/gvwkv37g/ UE 5.4 , Add missing IK Bones to Synty Skeletal Meshes using python command UE5SkeletonRenamer.py from https://github.com/toxrus/UEPythonUtils
+
 EUBP_ScaleRotate   https://blueprintue.com/blueprint/wgtfg46g/ UE 5.3
 
 EUBP_AssignSkeleton  https://blueprintue.com/blueprint/3iw2vz5b/ UE 5.3
