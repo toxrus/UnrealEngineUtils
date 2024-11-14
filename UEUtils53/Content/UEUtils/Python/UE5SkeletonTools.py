@@ -127,7 +127,7 @@ def SetUniformBoneTransform(source_mesh, asset):
         target_transform=target_skeleton_modifier.get_bone_transform(bone,False)
         msg_transform = str(bone) + ' Source Translation: ' + str(source_transform) + ' || Target Translation ' + str(target_transform)
         unreal.log(msg_transform)
-        target_skeleton_modifier.set_bone_transform(bone, unreal.Transform(source_transform.translation, source_transform.rotation.rotator(), source_transform.scale3d),False)
+        target_skeleton_modifier.set_bone_transform(bone, unreal.Transform(source_transform.translation, source_transform.rotation.rotator(), source_transform.scale3d),True) #If not working change True to False (True should work better though)
     source_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
     target_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
     return
