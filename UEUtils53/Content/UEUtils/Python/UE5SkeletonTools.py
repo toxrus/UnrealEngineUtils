@@ -90,44 +90,7 @@ def RenameAndFixSyntySkeleton(source_mesh, asset):
 
 
 def UnifyGenericSkeletalMesh(source_mesh, asset):
-    ####
-    #   source_mesh - Source skeletal mesh to which the asset is aligned to
-    #   asset - Skeletal Mesh whose skeleton is changed
-    ####
-    # Loading Libs
-    # load the skeleton modifier
-    source_skeleton_modifier = unreal.SkeletonModifier()
-    target_skeleton_modifier = unreal.SkeletonModifier()
-    # Set the source mesh
-    source_skeletal_mesh_path = unreal.EditorAssetLibrary.get_path_name_for_loaded_asset(source_mesh)
-    source_skeletal_mesh = unreal.EditorAssetLibrary.load_asset(source_skeletal_mesh_path)
-    source_skeleton_modifier.set_skeletal_mesh(source_skeletal_mesh)
-    # Set Target Skeletal mesh
-    target_skeletal_mesh_path = unreal.EditorAssetLibrary.get_path_name_for_loaded_asset(asset)
-    target_skeletal_mesh = unreal.EditorAssetLibrary.load_asset(target_skeletal_mesh_path)
-    target_skeleton_modifier.set_skeletal_mesh(target_skeletal_mesh)
-    # Get a list of bones in source skeletal mesh
-    source_bones_array = target_skeleton_modifier.get_all_bone_names()
-    # Get a list of bones in target skeletal mesh
-    target_bones_array = target_skeleton_modifier.get_all_bone_names()
-    # Run till all source bones have been handled
-    while True:
-    # Iterate through source bones
-        for bone in source_bones_array:
-        # If children exists it is not an end bone
-            if get_children_names():
-                break
-            #Check if bone in target bone
-            if bone not in target_bones_array:
 
-
-
-            source_transform = source_skeleton_modifier.get_bone_transform(bone)
-            target_skeleton_modifier.set_bone_transform(bone, source_transform, True)
-        if source_bones_array.len()==0:
-            break
-    source_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
-    target_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
     return
 
 
@@ -135,8 +98,6 @@ def SetUniformBoneTransform(source_mesh, asset):
     ####
     #   source_mesh - Source skeletal mesh which
     #   asset - Skeletal Mesh whose skeleton is changed
-    # Note: Only run this on skeletal meshes with the exact same skeleton! (might be overcautious)
-    # ToDO: Check to ensure skeletons are the same
     ####
     # Loading Libs
     # load the skeleton modifier
@@ -153,12 +114,20 @@ def SetUniformBoneTransform(source_mesh, asset):
     target_skeletal_mesh = unreal.EditorAssetLibrary.load_asset(target_skeletal_mesh_path)
     target_skeleton_modifier.set_skeletal_mesh(target_skeletal_mesh)
 
-    # Get a list of bones in target skeletal mesh
+    # Get a list of bones in target skeletal mesh and in source mesh (only change matching ones)
     target_bones_array = target_skeleton_modifier.get_all_bone_names()
+    source_bones_array = source_skeleton_modifier.get_all_bone_names()
+    if set(target_bones_array) != set(source_bones_array):
+        msg_string = 'INFO: The provided skeletal meshes ' + source_skeletal_mesh.get_name() + ' and ' + target_skeletal_mesh.get_name() + 'have differing bones. Process will still proceed'
+        unreal.log(msg_string)
+    common_bones_array = set(target_bones_array) & set(source_bones_array)
     # Apply bone transform of source to target
-    for bone in target_bones_array:
-        source_transform = source_skeleton_modifier.get_bone_transform(bone)
-        target_skeleton_modifier.set_bone_transform(bone, source_transform, True)
+    for bone in common_bones_array:
+        source_transform= source_skeleton_modifier.get_bone_transform(bone, False)
+        target_transform=target_skeleton_modifier.get_bone_transform(bone,False)
+        msg_transform = str(bone) + ' Source Translation: ' + str(source_transform) + ' || Target Translation ' + str(target_transform)
+        unreal.log(msg_transform)
+        target_skeleton_modifier.set_bone_transform(bone, unreal.Transform(source_transform.translation, source_transform.rotation.rotator(), source_transform.scale3d),False)
     source_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
     target_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
     return
@@ -213,8 +182,7 @@ def RotateBoneInMesh(skel_mesh, bone_name, rotation_vec, b_absolute_coords):
     skeleton_modifier.set_skeletal_mesh(skel_mesh)
     bone_transform = skeleton_modifier.get_bone_transform(bone_name, b_absolute_coords)
     if not bone_transform:
-        unreal.log(
-            "Bone could not be found, make sure spelling is correct and the specified bone exists in the entered mesh")
+        unreal.log("Bone could not be found, make sure spelling is correct and the specified bone exists in the entered mesh")
     else:
         unreal.log(bone_transform)
     # Build the new transform
