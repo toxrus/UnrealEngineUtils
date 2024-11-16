@@ -94,7 +94,7 @@ def UnifyGenericSkeletalMesh(source_mesh, asset):
     return
 
 
-def SetUniformBoneTransform(source_mesh, asset):
+def SetUniformBoneTransform(source_mesh, asset, b_debug):
     ####
     #   source_mesh - Source skeletal mesh which
     #   asset - Skeletal Mesh whose skeleton is changed
@@ -117,7 +117,7 @@ def SetUniformBoneTransform(source_mesh, asset):
     # Get a list of bones in target skeletal mesh and in source mesh (only change matching ones)
     target_bones_array = target_skeleton_modifier.get_all_bone_names()
     source_bones_array = source_skeleton_modifier.get_all_bone_names()
-    if set(target_bones_array) != set(source_bones_array):
+    if set(target_bones_array) != set(source_bones_array) and b_debug:
         msg_string = 'INFO: The provided skeletal meshes ' + source_skeletal_mesh.get_name() + ' and ' + target_skeletal_mesh.get_name() + 'have differing bones. Process will still proceed'
         unreal.log(msg_string)
     common_bones_array = set(target_bones_array) & set(source_bones_array)
@@ -125,9 +125,10 @@ def SetUniformBoneTransform(source_mesh, asset):
     for bone in common_bones_array:
         source_transform= source_skeleton_modifier.get_bone_transform(bone, False)
         target_transform=target_skeleton_modifier.get_bone_transform(bone,False)
-        msg_transform = str(bone) + ' Source Translation: ' + str(source_transform) + ' || Target Translation ' + str(target_transform)
-        unreal.log(msg_transform)
-        target_skeleton_modifier.set_bone_transform(bone, unreal.Transform(source_transform.translation, source_transform.rotation.rotator(), source_transform.scale3d),True) #If not working change True to False (True should work better though)
+        if b_debug:
+            msg_transform = str(bone) + ' Source Translation: ' + str(source_transform) + ' || Target Translation ' + str(target_transform)
+            unreal.log(msg_transform)
+        target_skeleton_modifier.set_bone_transform(bone, unreal.Transform(target_transform.translation, source_transform.rotation.rotator(), target_transform.scale3d),False)
     source_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
     target_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
     return
@@ -213,3 +214,57 @@ def AddBoneInMesh(skel_mesh, bone_name, bone_parent, bone_transform, b_absolute_
     skeleton_modifier.commit_skeleton_to_skeletal_mesh()
 
     return bone_transform
+
+def FixMissingIKBones(source_mesh, asset,b_debug):
+    ####
+    #   source_mesh - Source skeletal mesh which
+    #   asset - Skeletal Mesh whose skeleton is changed
+    ####
+    # Loading Libs
+    # load the skeleton modifier
+    source_skeleton_modifier = unreal.SkeletonModifier()
+    target_skeleton_modifier = unreal.SkeletonModifier()
+    # Source Skeletal mesh setup
+    # Set the source mesh path
+    source_skeletal_mesh_path = unreal.EditorAssetLibrary.get_path_name_for_loaded_asset(source_mesh)
+    source_skeletal_mesh = unreal.EditorAssetLibrary.load_asset(source_skeletal_mesh_path)
+    source_skeleton_modifier.set_skeletal_mesh(source_skeletal_mesh)
+
+    # Target Skeletal mesh setup
+    target_skeletal_mesh_path = unreal.EditorAssetLibrary.get_path_name_for_loaded_asset(asset)
+    target_skeletal_mesh = unreal.EditorAssetLibrary.load_asset(target_skeletal_mesh_path)
+    target_skeleton_modifier.set_skeletal_mesh(target_skeletal_mesh)
+
+    # Get a list of bones in target skeletal mesh and in source mesh (only change matching ones)
+    target_bones_array = target_skeleton_modifier.get_all_bone_names()
+    source_bones_array = source_skeleton_modifier.get_all_bone_names()
+
+    missing_bones = set(source_bones_array) - set(target_bones_array)
+    if b_debug:
+        unreal.log('List of missing bones: ')
+        for bone in missing_bones:
+            msg_bones = str(bone)
+            unreal.log(msg_bones)
+
+    # Iterate over the bones and add them at the correct locations (hard coded for now)
+    for bone in missing_bones:
+        if bone == "ik_foot_root":
+            # If the foot root is missing all ik_foot bones are missing -> add them all in order
+            target_skeleton_modifier.add_bone("ik_foot_root", "root", source_skeleton_modifier.get_bone_transform(bone))
+            target_skeleton_modifier.add_bone("ik_foot_l", "ik_foot_root", source_skeleton_modifier.get_bone_transform("ik_foot_l"))
+            target_skeleton_modifier.add_bone("ik_foot_r", "ik_foot_root", source_skeleton_modifier.get_bone_transform("ik_foot_r"))
+        elif bone == "ik_hand_root":
+            # If the hand root is missing all ik_hand bones are missing -> add them all in order
+            target_skeleton_modifier.add_bone("ik_hand_root", "root", source_skeleton_modifier.get_bone_transform(bone))
+            target_skeleton_modifier.add_bone("ik_hand_gun", "ik_hand_root", source_skeleton_modifier.get_bone_transform("ik_hand_gun"))
+            target_skeleton_modifier.add_bone("ik_hand_l", "ik_hand_gun", source_skeleton_modifier.get_bone_transform("ik_hand_l"))
+            target_skeleton_modifier.add_bone("ik_hand_r", "ik_hand_gun", source_skeleton_modifier.get_bone_transform("ik_hand_r"))
+        elif bone == "jaw":
+            # If the jaw is missing, just add it
+            target_skeleton_modifier.add_bone("jaw", "head", source_skeleton_modifier.get_bone_transform(bone))
+
+    source_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
+    target_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
+
+
+    return
