@@ -11,12 +11,26 @@ SkeletalMesh Actions:
   - Generic Skeleton Unifier (Work In Progress)
   - AddMissingIKBones adds IK and Jaw bones to selected skeletal meshes (Tested with Starter and ApocGen2, both UE4 skeletons. Need to apply Gen2 fix first for correct rotations. Should also work with any other skeleton) 
 
+IF USING IN ANOTHER PROJECT PLEASE ENABLE THE FOLLOWING PLUGINS:
+  - ModelingToolsEditorMode
+  - SkeletalMeshModelingTools
+  - GeometryScripting
+
+Set an additional Python Path in project settings -> plugins -> python that targets the folder containing the .py file (Isolate Interpreter Environment is optional and most likely shouldn't be enabled)
+
+
+
+
+
+
+
 
 
 
 
 
 LEGACY // Unsupported
+
 Make sure to use the unreal engine version specified to load the uasset files to prevent issues. Then migrate into target project. For manual setup check the blueprintue.com links.
 Also note the issues / problems listed with each Utility before using!
 Please turn on the Geometry Script (experimental) and Dataprep Editor plugins to ensure that the action utils work correctly.
