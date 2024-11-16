@@ -16,7 +16,7 @@ IF USING IN ANOTHER PROJECT PLEASE ENABLE THE FOLLOWING PLUGINS:
   - SkeletalMeshModelingTools
   - GeometryScripting
 
-Set an additional Python Path in project settings -> plugins -> python that targets the folder containing the .py file (Isolate Interpreter Environment is optional and most likely shouldn't be enabled)
+Set an additional Python Path in project settings -> plugins -> python that targets the exact subfolder containing the .py file (Isolate Interpreter Environment is optional and most likely shouldn't be enabled)
 
 
 
