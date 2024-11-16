@@ -9,14 +9,16 @@ SkeletalMesh Actions:
   - Synty Unreal Engine 4 Mannequin Gen1->Gen2 Transform correction (implemented, tested with Apoc Gen 2 and StarterPack Gen1, will ignore extra bones/sockets on either skeletal mesh)
   - Synty Skeleton Unifier (implemented, tested across various packs. Might not support the knights pack characters)
   - Generic Skeleton Unifier (Work In Progress)
-  - AddMissingIKBones adds IK and Jaw bones to selected skeletal meshes (Tested with Starter and ApocGen2, both UE4 skeletons. Need to apply Gen2 fix first for correct rotations. Should also work with any other skeleton) 
+  - AddMissingIKBones adds IK and Jaw bones to selected skeletal meshes (Tested with Starter and ApocGen2, both UE4 skeletons. Need to apply Gen2 fix first for correct rotations. Should also work with any other skeleton)
+
+Setup Instructions: Set an additional Python Path in project settings -> plugins -> python that targets the exact subfolder containing the .py file (Isolate Interpreter Environment is optional and most likely shouldn't be enabled)
 
 IF USING IN ANOTHER PROJECT PLEASE ENABLE THE FOLLOWING PLUGINS:
   - ModelingToolsEditorMode
   - SkeletalMeshModelingTools
   - GeometryScripting
 
-Set an additional Python Path in project settings -> plugins -> python that targets the exact subfolder containing the .py file (Isolate Interpreter Environment is optional and most likely shouldn't be enabled)
+
 
 
 
