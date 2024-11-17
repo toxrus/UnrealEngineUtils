@@ -128,7 +128,8 @@ def SetUniformBoneTransform(source_mesh, asset, b_debug):
         if b_debug:
             msg_transform = str(bone) + ' Source Translation: ' + str(source_transform) + ' || Target Translation ' + str(target_transform)
             unreal.log(msg_transform)
-        target_skeleton_modifier.set_bone_transform(bone, unreal.Transform(target_transform.translation, source_transform.rotation.rotator(), target_transform.scale3d),False)
+        # target_skeleton_modifier.set_bone_transform(bone, unreal.Transform(target_transform.translation, source_transform.rotation.rotator(), target_transform.scale3d),False)
+        target_skeleton_modifier.set_bone_transform(bone, unreal.Transform(source_transform.translation, source_transform.rotation.rotator(), source_transform.scale3d),False) #Potential Fix for arms breaking
     source_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
     target_skeleton_modifier.commit_skeleton_to_skeletal_mesh()
     return
