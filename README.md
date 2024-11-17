@@ -18,7 +18,14 @@ IF USING IN ANOTHER PROJECT PLEASE ENABLE THE FOLLOWING PLUGINS:
   - SkeletalMeshModelingTools
   - GeometryScripting
 
+#### NOTE ####
+If using translation retargeting options in any skeleton any skeleton changes seems to reset them.
+To use the Gen1 Fix and Add missing IK bones options try the following work around:
+  - Advance copy the intended source skeletal mesh with its skeleton to a new folder. Use this as source instead
+  - After running the fixes the copied source can be deleted (or kept around for reuse)
+  - Assign the original source skeleton to the fixed, former gen1 skeletal meshes.
 
+Since translation retargeting options are stored on the skeleton this way they should be preserved.
 
 
 
